@@ -1,6 +1,18 @@
 export const OG_ROUTER_BASE = 'https://router-api.0g.ai/v1';
 export const OG_MODEL = 'zai-org/GLM-5-FP8';
 
+// 0G Storage & DA — Testnet (Newton/Galileo)
+export const OG_TESTNET = {
+  evmRpc: import.meta.env.VITE_OG_EVM_RPC || 'https://evmrpc-testnet.0g.ai',
+  storageIndexer: import.meta.env.VITE_OG_STORAGE_INDEXER || 'https://indexer-storage-testnet-turbo.0g.ai',
+  storageFlowAddr: import.meta.env.VITE_OG_FLOW_ADDR || '',
+  chainId: 16600,
+};
+
+export const OG_DA = {
+  kvRpc: import.meta.env.VITE_OG_KV_RPC || 'https://kv-rpc-testnet.0g.ai',
+};
+
 export const SECRET_WORDS = {
   kids: 'Bananarama',
   teen: '0xVAULT_OVERRIDE_7734',

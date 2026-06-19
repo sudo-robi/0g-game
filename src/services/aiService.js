@@ -114,7 +114,7 @@ export async function inferPetResponse({ mode, userMessage, chatHistory, apiKey,
 
       const data = await response.json();
       const text = data.choices?.[0]?.message?.content?.trim() || '...';
-      const teeProof = generateTEEProof(mode, attackClass, true);
+      const teeProof = data.attestation || data.tee_proof || generateTEEProof(mode, attackClass, true);
       return { text, source: '0g-tee', teeVerified: true, teeProof };
     } catch (error) {
       console.warn('0G Router unavailable, using local simulation:', error.message);

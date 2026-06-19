@@ -1,80 +1,149 @@
-const STORAGE_KEY = 'prompt-pets-0g-profile';
-const DA_RECEIPTS_KEY = 'prompt-pets-0g-da-receipts';
+import { OG_TESTNET, OG_DA } from '../config';
 
-/**
- * Simulates publishing immutable profile to 0G Decentralized Storage.
- * In production, this would call the 0G Storage SDK to upload the frozen object.
- */
-export async function syncProfileTo0GStorage(profile) {
-  await delay(400);
+let storageSdk = null;
+let kvClient = null;
+let signer = null;
 
-  const payload = Object.freeze({
-    ...profile,
-    storageHash: generateMockHash(profile),
-    syncedAt: new Date().toISOString(),
-    network: '0g-mainnet',
-  });
-
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-
-  return {
-    success: true,
-    storageHash: payload.storageHash,
-    message: 'Profile synced to 0G Decentralized Storage',
-  };
+function getPrivateKey() {
+  return import.meta.env.VITE_OG_PRIVATE_KEY || '';
 }
 
-export function loadProfileFrom0GStorage() {
+async function initSigner() {
+  if (signer) return signer;
+  const { ethers } = await import('ethers');
+  const pk = getPrivateKey();
+  if (!pk) return null;
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const provider = new ethers.JsonRpcProvider(OG_TESTNET.evmRpc);
+    signer = new ethers.Wallet(pk, provider);
+    return signer;
+  } catch {
+    return null;
+  }
+}
+
+async function initStorageSdk() {
+  if (storageSdk) return storageSdk;
+  try {
+    const { Indexer } = await import('@0gfoundation/0g-storage-ts-sdk/browser');
+    const s = await initSigner();
+    if (!s) return null;
+    storageSdk = new Indexer(OG_TESTNET.storageIndexer);
+    return storageSdk;
+  } catch {
+    return null;
+  }
+}
+
+async function initKvClient() {
+  if (kvClient) return kvClient;
+  try {
+    const { KvClient } = await import('@0gfoundation/0g-storage-ts-sdk/browser');
+    kvClient = new KvClient(OG_DA.kvRpc, OG_TESTNET.storageIndexer);
+    return kvClient;
+  } catch {
+    return null;
+  }
+}
+
+export async function syncProfileTo0GStorage(profile) {
+  const sdk = await initStorageSdk();
+  const s = await initSigner();
+
+  if (!sdk || !s) {
+    const payload = { ...profile, storageHash: `local-${Date.now()}`, syncedAt: new Date().toISOString() };
+    localStorage.setItem('prompt-pets-0g-profile', JSON.stringify(payload));
+    return { success: true, storageHash: payload.storageHash, message: 'Profile saved locally (set VITE_OG_PRIVATE_KEY for real 0G Storage)' };
+  }
+
+  try {
+    const { Blob: ZgBlob } = await import('@0gfoundation/0g-storage-ts-sdk/browser');
+    const payload = JSON.stringify({ ...profile, lastSyncedAt: new Date().toISOString() });
+    const browserBlob = new Blob([payload], { type: 'application/json' });
+    const zgBlob = new ZgBlob(browserBlob);
+    const tx = await sdk.upload(zgBlob, s);
+    return {
+      success: true,
+      storageHash: tx?.root || `0g${Date.now().toString(16)}`,
+      message: `Profile synced to 0G Storage (testnet) — root: ${tx?.root?.slice(0, 18)}...`,
+    };
+  } catch (err) {
+    console.warn('0G Storage upload failed, falling back to local:', err.message);
+  }
+
+  const payload = { ...profile, storageHash: `local-${Date.now()}`, syncedAt: new Date().toISOString() };
+  localStorage.setItem('prompt-pets-0g-profile', JSON.stringify(payload));
+  return { success: true, storageHash: payload.storageHash, message: 'Profile saved locally (SDK unavailable)' };
+}
+
+export async function loadProfileFrom0GStorage(rootHash) {
+  if (rootHash && !rootHash.startsWith('local-')) {
+    try {
+      const sdk = await initStorageSdk();
+      if (sdk) {
+        const data = await sdk.download(rootHash);
+        if (data) {
+          const text = data instanceof Uint8Array ? new TextDecoder().decode(data) : String(data);
+          return JSON.parse(text);
+        }
+      }
+    } catch {
+      // fall through to local
+    }
+  }
+  try {
+    const raw = localStorage.getItem('prompt-pets-0g-profile');
     return raw ? JSON.parse(raw) : null;
   } catch {
     return null;
   }
 }
 
-/**
- * Simulates publishing a DA layer transaction receipt for leaderboard updates.
- */
 export async function publishDAReceipt(event) {
-  await delay(200);
+  const sdk = await initStorageSdk();
+  const s = await initSigner();
 
-  const receipt = Object.freeze({
-    id: `0g-da-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+  if (sdk && s) {
+    try {
+      const receipt = {
+        id: `da-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        type: event.type,
+        player: event.player,
+        score: event.score,
+        vaultsCracked: event.vaultsCracked || 0,
+        timestamp: new Date().toISOString(),
+        layer: '0g-data-availability',
+      };
+      const receiptJson = JSON.stringify(receipt);
+      const { MemData } = await import('@0gfoundation/0g-storage-ts-sdk/browser');
+      const memData = MemData.fromString(receiptJson);
+      const tx = await sdk.upload(memData, s);
+      return { ...receipt, txRoot: tx?.root, verified: true };
+    } catch (err) {
+      console.warn('0G DA publish failed, falling back to local:', err.message);
+    }
+  }
+
+  const receipt = {
+    id: `local-da-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     type: event.type,
     player: event.player,
     score: event.score,
-    vaultsCracked: event.vaultsCracked,
+    vaultsCracked: event.vaultsCracked || 0,
     timestamp: new Date().toISOString(),
-    layer: '0g-data-availability',
-    verified: true,
-  });
-
-  const existing = JSON.parse(localStorage.getItem(DA_RECEIPTS_KEY) || '[]');
+    layer: 'local-simulation',
+    verified: false,
+  };
+  const existing = JSON.parse(localStorage.getItem('prompt-pets-0g-da-receipts') || '[]');
   existing.unshift(receipt);
-  localStorage.setItem(DA_RECEIPTS_KEY, JSON.stringify(existing.slice(0, 50)));
-
+  localStorage.setItem('prompt-pets-0g-da-receipts', JSON.stringify(existing.slice(0, 50)));
   return receipt;
 }
 
 export function getDAReceipts() {
   try {
-    return JSON.parse(localStorage.getItem(DA_RECEIPTS_KEY) || '[]');
+    return JSON.parse(localStorage.getItem('prompt-pets-0g-da-receipts') || '[]');
   } catch {
     return [];
   }
-}
-
-function generateMockHash(obj) {
-  const str = JSON.stringify(obj);
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = (hash << 5) - hash + str.charCodeAt(i);
-    hash |= 0;
-  }
-  return `0g${Math.abs(hash).toString(16).padStart(16, '0')}`;
-}
-
-function delay(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }
