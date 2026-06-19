@@ -100,7 +100,7 @@ export default function App() {
         </div>
 
         {/* Main Content */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 md:gap-8">
+        <div className="grid lg:grid-cols-5 gap-6 md:gap-8">
           {/* Left Column */}
           <div className="lg:col-span-3 space-y-6">
             <PetContainer

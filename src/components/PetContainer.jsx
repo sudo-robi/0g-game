@@ -61,7 +61,7 @@ export default function PetContainer({ mode, theme, petStatus, profile, messages
   ) : null;
 
   return (
-    <div className={`rounded-3xl p-4 sm:p-6 md:p-8 h-full flex flex-col ${
+    <div className={`rounded-3xl p-4 sm:p-6 md:p-8 flex flex-col ${
       isKids ? 'glass-kids' : 'glass-teen neon-border'
     }`}>
       <div className="flex items-center justify-between mb-4 sm:mb-5 flex-wrap gap-2">
