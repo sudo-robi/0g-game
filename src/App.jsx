@@ -44,7 +44,7 @@ export default function App() {
   const currentReputation = REPUTATION_PATHS.find(p => p.id === game.reputation);
 
   const navItems = [
-    { id: 'game', label: '🎮 Game' },
+    { id: 'game', label: '🎮 Game', action: () => { closeAllModals(); game.setActiveTab('game'); } },
     { id: 'daily', label: '📅 Daily', action: () => { closeAllModals(); game.setShowDailyVault(true); } },
     { id: 'boss', label: '👾 Boss', action: () => { closeAllModals(); game.setShowBoss(true); } },
     { id: 'shop', label: '🛒 Shop', action: () => { closeAllModals(); game.setShowShop(true); } },
@@ -90,7 +90,7 @@ export default function App() {
           {navItems.map(item => (
             <button key={item.id} onClick={item.action || (() => game.setActiveTab(item.id))}
               className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
-                game.activeTab === item.id && !item.action
+                game.activeTab === item.id
                   ? isKids ? 'bg-white/20 text-white' : 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
                   : isKids ? 'bg-white/5 text-white/70 hover:bg-white/10' : 'bg-gray-800/40 text-gray-400 hover:text-cyan-300 hover:bg-gray-800/60'
               }`}>
