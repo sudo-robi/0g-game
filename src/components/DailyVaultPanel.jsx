@@ -1,6 +1,6 @@
 export default function DailyVaultPanel({ vault, defeated, onAttack, isLoading, onClose }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center bg-black/70 backdrop-blur-sm overflow-y-auto py-4 sm:py-8" onClick={onClose}>
       <div className="bg-gray-900 border border-yellow-500/30 rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl text-center" onClick={e => e.stopPropagation()}>
         <div className="text-5xl mb-4">{vault.icon}</div>
         <h2 className="font-display font-bold text-xl text-yellow-300 mb-2">Daily Challenge Vault</h2>

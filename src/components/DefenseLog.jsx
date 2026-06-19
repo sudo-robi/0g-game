@@ -10,7 +10,7 @@ export default function DefenseLog({ defenseLog }) {
   };
 
   return (
-    <div className="glass-teen neon-border rounded-2xl p-5">
+    <div className="glass-teen neon-border rounded-2xl p-4 sm:p-5">
       <h3 className="font-mono text-cyan-400 text-base font-bold mb-3 flex items-center gap-2">
         <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
         Defense Log — LIVE

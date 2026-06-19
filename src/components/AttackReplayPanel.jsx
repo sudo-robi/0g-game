@@ -8,7 +8,7 @@ export default function AttackReplayPanel({ replay, onClose, onShare }) {
   const isSuccess = replay.success;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center bg-black/70 backdrop-blur-sm overflow-y-auto py-4 sm:py-8" onClick={onClose}>
       <div className={`bg-gray-900 border rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl ${isSuccess ? 'border-orange-500/30' : 'border-blue-500/30'}`} onClick={e => e.stopPropagation()}>
         <div className="text-center mb-4">
           <span className={`text-4xl block mb-2 ${isSuccess ? '' : 'animate-pulse'}`}>{isSuccess ? '🔍' : '🛡️'}</span>

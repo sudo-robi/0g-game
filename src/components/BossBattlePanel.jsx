@@ -3,7 +3,7 @@ export default function BossBattlePanel({ boss, onAttack, isLoading, onClose }) 
   const healthColor = healthPercent > 50 ? 'bg-green-500' : healthPercent > 25 ? 'bg-yellow-500' : 'bg-red-500';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center bg-black/70 backdrop-blur-sm overflow-y-auto py-4 sm:py-8" onClick={onClose}>
       <div className="bg-gray-900 border border-red-500/30 rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl text-center" onClick={e => e.stopPropagation()}>
         <div className="text-6xl mb-4 animate-pulse">{boss.emoji}</div>
         <h2 className="font-display font-bold text-xl text-red-400 mb-2">BOSS BATTLE</h2>

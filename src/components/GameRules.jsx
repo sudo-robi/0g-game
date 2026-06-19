@@ -18,10 +18,10 @@ export default function GameRules({ mode, theme }) {
       ];
 
   return (
-    <div className={`rounded-3xl p-6 md:p-8 ${
+    <div className={`rounded-3xl p-4 sm:p-6 md:p-8 ${
       isKids ? 'glass-kids' : 'glass-teen neon-border'
     }`}>
-      <h2 className={`font-display font-bold text-xl mb-4 ${
+      <h2 className={`font-display font-bold text-lg sm:text-xl mb-4 ${
         isKids ? 'text-white' : 'text-cyan-300 font-mono'
       }`}>
         {isKids ? '📜 How to Play' : '> MISSION_BRIEFING.md'}

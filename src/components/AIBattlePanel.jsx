@@ -1,6 +1,6 @@
 export default function AIBattlePanel({ opponent, result, log, onStartBattle, onExecuteBattle, isLoading, onClose }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center bg-black/70 backdrop-blur-sm overflow-y-auto py-4 sm:py-8" onClick={onClose}>
       <div className="bg-gray-900 border border-pink-500/30 rounded-2xl p-6 max-w-lg w-full mx-4 shadow-2xl" onClick={e => e.stopPropagation()}>
         <div className="text-center mb-4">
           <span className="text-4xl block mb-2">⚔️</span>

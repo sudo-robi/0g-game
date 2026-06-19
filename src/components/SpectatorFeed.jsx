@@ -2,7 +2,7 @@ import AttackClassBadge from './AttackClassBadge';
 
 export default function SpectatorFeed({ log, onClose }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center bg-black/70 backdrop-blur-sm overflow-y-auto py-4 sm:py-8" onClick={onClose}>
       <div className="bg-gray-900 border border-cyan-500/30 rounded-2xl p-6 max-w-lg w-full mx-4 shadow-2xl" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-mono font-bold text-cyan-400 text-lg">👁️ Spectator Feed — LIVE</h2>

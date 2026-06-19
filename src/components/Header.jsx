@@ -13,9 +13,9 @@ export default function Header({ mode, theme, playerName, onRename, rank, profil
   };
 
   return (
-    <header className="text-center space-y-4">
-      <div className="flex items-center justify-center gap-3">
-        <h1 className={`font-display font-bold text-4xl md:text-6xl ${
+    <header className="text-center space-y-3 sm:space-y-4">
+      <div className="flex items-center justify-center gap-2 sm:gap-3">
+        <h1 className={`font-display font-bold text-2xl sm:text-4xl md:text-6xl ${
           isKids ? 'text-white drop-shadow-lg' : 'text-cyan-300 neon-text'
         }`}>
           Prompt Pets: Break the Vault!
@@ -36,7 +36,7 @@ export default function Header({ mode, theme, playerName, onRename, rank, profil
         </span>
       </div>
 
-      <p className={`text-base md:text-lg max-w-2xl mx-auto ${
+      <p className={`text-sm sm:text-base md:text-lg max-w-2xl mx-auto ${
         isKids ? 'text-white/90' : 'text-gray-400 font-mono'
       }`}>
         {isKids

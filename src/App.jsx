@@ -61,26 +61,26 @@ export default function App() {
     <div className={`min-h-screen transition-all duration-700 ${isKids ? 'kids-bg font-display' : 'teen-bg'}`}>
       <NotificationToast notification={game.notification} />
 
-      <div className="max-w-7xl mx-auto px-4 py-6 md:py-10 space-y-6">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-10 space-y-4 sm:space-y-6">
         <ModeToggle mode={game.mode} onSwitch={game.switchMode} />
         <Header mode={game.mode} theme={game.theme} playerName={game.playerName} onRename={game.setPlayerName} rank={game.rank} profile={game.profile} />
 
         {/* Settings Bar */}
         <div className="flex flex-wrap justify-center gap-2">
           <button onClick={() => { closeAllModals(); game.setShowDifficultyModal(true); }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-mono font-semibold border transition-all ${currentDifficulty.bg} ${currentDifficulty.border} ${currentDifficulty.color}`}>
+            className={`px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-lg text-xs font-mono font-semibold border transition-all ${currentDifficulty.bg} ${currentDifficulty.border} ${currentDifficulty.color}`}>
             ⚙️ {currentDifficulty.icon} {currentDifficulty.label}
           </button>
           <button onClick={() => { closeAllModals(); game.setShowPetClassModal(true); }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-mono font-semibold border transition-all bg-purple-900/30 border-purple-500/30 text-purple-300`}>
+            className={`px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-lg text-xs font-mono font-semibold border transition-all bg-purple-900/30 border-purple-500/30 text-purple-300`}>
             {currentClass.emoji} {currentClass.label}
           </button>
           <button onClick={() => { closeAllModals(); game.setShowReputation(true); }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-mono font-semibold border transition-all ${game.reputation ? 'bg-green-900/30 border-green-500/30 text-green-300' : 'bg-gray-800/40 border-gray-700/50 text-gray-400'}`}>
+            className={`px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-lg text-xs font-mono font-semibold border transition-all ${game.reputation ? 'bg-green-900/30 border-green-500/30 text-green-300' : 'bg-gray-800/40 border-gray-700/50 text-gray-400'}`}>
             🛤️ {game.reputation ? `${currentReputation?.label || 'Unknown'}` : 'Choose Path'}
           </button>
           <button onClick={() => { closeAllModals(); game.setShowAchievements(true); }}
-            className="px-3 py-1.5 rounded-lg text-xs font-mono font-semibold border border-blue-500/30 bg-blue-900/30 text-blue-300">
+            className="px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-lg text-xs font-mono font-semibold border border-blue-500/30 bg-blue-900/30 text-blue-300">
             🏅 {game.achievements.length} Badges
           </button>
         </div>
@@ -89,7 +89,7 @@ export default function App() {
         <div className="flex flex-wrap justify-center gap-2">
           {navItems.map(item => (
             <button key={item.id} onClick={item.action || (() => game.setActiveTab(item.id))}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+              className={`px-3 sm:px-4 py-2.5 sm:py-2 rounded-xl text-sm font-semibold transition-all ${
                 game.activeTab === item.id
                   ? isKids ? 'bg-white/20 text-white' : 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
                   : isKids ? 'bg-white/5 text-white/70 hover:bg-white/10' : 'bg-gray-800/40 text-gray-400 hover:text-cyan-300 hover:bg-gray-800/60'
@@ -100,7 +100,7 @@ export default function App() {
         </div>
 
         {/* Main Content */}
-        <div className="grid lg:grid-cols-5 gap-6 md:gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 md:gap-8">
           {/* Left Column */}
           <div className="lg:col-span-3 space-y-6">
             <PetContainer
@@ -113,7 +113,7 @@ export default function App() {
 
             {/* Attack Analysis */}
             {game.lastAttackClass && (
-              <div className={`rounded-xl p-4 ${isKids ? 'bg-indigo-900/30' : 'bg-gray-900/60 border border-gray-800'}`}>
+              <div className={`rounded-xl p-3 sm:p-4 ${isKids ? 'bg-indigo-900/30' : 'bg-gray-900/60 border border-gray-800'}`}>
                 <p className="font-mono text-xs text-gray-500 mb-2">[ANALYSIS] Last attack classified as:</p>
                 <AttackClassBadge attackId={game.lastAttackClass} size="lg" />
                 {game.lastReplay && (
@@ -129,14 +129,14 @@ export default function App() {
           {/* Right Column */}
           <div className="lg:col-span-2 space-y-6">
             {/* Leaderboard Categories */}
-            <div className={`rounded-3xl p-6 ${isKids ? 'glass-kids' : 'glass-teen neon-border'}`}>
-              <h2 className={`font-display font-bold text-lg mb-3 ${isKids ? 'text-white' : 'text-cyan-300 font-mono'}`}>
+            <div className={`rounded-3xl p-4 sm:p-6 ${isKids ? 'glass-kids' : 'glass-teen neon-border'}`}>
+              <h2 className={`font-display font-bold text-base sm:text-lg mb-3 ${isKids ? 'text-white' : 'text-cyan-300 font-mono'}`}>
                 Leaderboard
               </h2>
               <div className="flex gap-1 mb-4 flex-wrap">
                 {LEADERBOARD_CATEGORIES.map(cat => (
                   <button key={cat.id} onClick={() => game.setLeaderboardCategory(cat.id)}
-                    className={`text-xs px-2.5 py-1.5 rounded-lg font-mono transition-all ${
+                    className={`text-xs px-2 sm:px-2.5 py-1.5 rounded-lg font-mono transition-all ${
                       game.leaderboardCategory === cat.id
                         ? isKids ? 'bg-white/20 text-white' : 'bg-cyan-500/20 text-cyan-300'
                         : isKids ? 'text-white/50 hover:text-white' : 'text-gray-500 hover:text-gray-300'
@@ -152,34 +152,34 @@ export default function App() {
             <GameRules mode={game.mode} theme={game.theme} />
 
             {/* Stats */}
-            <div className={`rounded-3xl p-6 ${isKids ? 'glass-kids' : 'glass-teen neon-border'}`}>
+            <div className={`rounded-3xl p-4 sm:p-6 ${isKids ? 'glass-kids' : 'glass-teen neon-border'}`}>
               <h3 className={`font-display font-bold text-base mb-3 ${isKids ? 'text-white' : 'text-cyan-300 font-mono'}`}>
                 {isKids ? '⚡ Your Progress' : '> PLAYER_STATS.exe'}
               </h3>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-black/30 rounded-xl p-3 text-center">
+              <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                <div className="bg-black/30 rounded-xl p-2 sm:p-3 text-center">
                   <p className={`font-mono text-xs ${isKids ? 'text-white/60' : 'text-gray-500'}`}>Level</p>
-                  <p className={`font-bold text-lg ${isKids ? 'text-white' : 'text-cyan-300'}`}>{game.profile.petLevel}</p>
+                  <p className={`font-bold text-base sm:text-lg ${isKids ? 'text-white' : 'text-cyan-300'}`}>{game.profile.petLevel}</p>
                 </div>
-                <div className="bg-black/30 rounded-xl p-3 text-center">
+                <div className="bg-black/30 rounded-xl p-2 sm:p-3 text-center">
                   <p className={`font-mono text-xs ${isKids ? 'text-white/60' : 'text-gray-500'}`}>Evolution</p>
-                  <p className={`font-bold text-sm ${isKids ? 'text-white' : 'text-cyan-300'}`}>{game.evolution.title}</p>
+                  <p className={`font-bold text-xs sm:text-sm ${isKids ? 'text-white' : 'text-cyan-300'}`}>{game.evolution.title}</p>
                 </div>
-                <div className="bg-black/30 rounded-xl p-3 text-center">
+                <div className="bg-black/30 rounded-xl p-2 sm:p-3 text-center">
                   <p className={`font-mono text-xs ${isKids ? 'text-white/60' : 'text-gray-500'}`}>Defense</p>
-                  <p className={`font-bold text-lg ${isKids ? 'text-white' : 'text-green-400'}`}>{game.evolution.defenseRating}</p>
+                  <p className={`font-bold text-base sm:text-lg ${isKids ? 'text-white' : 'text-green-400'}`}>{game.evolution.defenseRating}</p>
                 </div>
-                <div className="bg-black/30 rounded-xl p-3 text-center">
+                <div className="bg-black/30 rounded-xl p-2 sm:p-3 text-center">
                   <p className={`font-mono text-xs ${isKids ? 'text-white/60' : 'text-gray-500'}`}>Mutations</p>
-                  <p className={`font-bold text-lg ${isKids ? 'text-white' : 'text-purple-400'}`}>{(game.profile.mutations || []).length}</p>
+                  <p className={`font-bold text-base sm:text-lg ${isKids ? 'text-white' : 'text-purple-400'}`}>{(game.profile.mutations || []).length}</p>
                 </div>
-                <div className="bg-black/30 rounded-xl p-3 text-center">
+                <div className="bg-black/30 rounded-xl p-2 sm:p-3 text-center">
                   <p className={`font-mono text-xs ${isKids ? 'text-white/60' : 'text-gray-500'}`}>Difficulty</p>
-                  <p className={`font-bold text-sm ${currentDifficulty.color}`}>{currentDifficulty.icon} {currentDifficulty.label}</p>
+                  <p className={`font-bold text-xs sm:text-sm ${currentDifficulty.color}`}>{currentDifficulty.icon} {currentDifficulty.label}</p>
                 </div>
-                <div className="bg-black/30 rounded-xl p-3 text-center">
+                <div className="bg-black/30 rounded-xl p-2 sm:p-3 text-center">
                   <p className={`font-mono text-xs ${isKids ? 'text-white/60' : 'text-gray-500'}`}>Class</p>
-                  <p className={`font-bold text-sm text-purple-300`}>{currentClass.emoji} {currentClass.label}</p>
+                  <p className={`font-bold text-xs sm:text-sm text-purple-300`}>{currentClass.emoji} {currentClass.label}</p>
                 </div>
               </div>
             </div>
@@ -229,7 +229,7 @@ export default function App() {
 
       {/* Reputation Modal */}
       {game.showReputation && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={() => game.setShowReputation(false)}>
+        <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center bg-black/70 backdrop-blur-sm overflow-y-auto py-4 sm:py-8" onClick={() => game.setShowReputation(false)}>
           <div className="bg-gray-900 border border-green-500/30 rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl" onClick={e => e.stopPropagation()}>
             <h2 className="font-display font-bold text-xl text-green-300 mb-2">🛤️ Choose Your Path</h2>
             <p className="text-gray-400 text-sm mb-6 font-mono">Your reputation path changes how you earn rewards.</p>

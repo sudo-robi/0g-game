@@ -37,10 +37,10 @@ export default function Leaderboard({ mode, leaderboard, playerName, category })
   });
 
   return (
-    <div className={`rounded-3xl p-6 md:p-8 ${
+    <div className={`rounded-3xl p-4 sm:p-6 md:p-8 ${
       isKids ? 'glass-kids' : 'glass-teen neon-border'
     }`}>
-      <h2 className={`font-display font-bold text-xl mb-1 ${
+      <h2 className={`font-display font-bold text-lg sm:text-xl mb-1 ${
         isKids ? 'text-white' : 'text-cyan-300 font-mono'
       }`}>
         {isKids ? '🏆 Top Tricksters' : 'LIVE LEADERBOARD'}
@@ -49,13 +49,13 @@ export default function Leaderboard({ mode, leaderboard, playerName, category })
         Season 1 · {cat.label} ({getMetricLabel()})
       </p>
 
-      <div className="space-y-3">
+      <div className="space-y-2 sm:space-y-3">
         {sorted.map((player, i) => {
           const isYou = player.name === playerName;
           return (
             <div
               key={player.name}
-              className={`flex items-center gap-4 rounded-xl px-4 py-3 transition-all ${
+              className={`flex items-center gap-2 sm:gap-4 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 transition-all ${
                 isYou
                   ? isKids
                     ? 'bg-yellow-500/20 ring-2 ring-yellow-400'
@@ -65,28 +65,28 @@ export default function Leaderboard({ mode, leaderboard, playerName, category })
                     : 'bg-gray-800/40'
               }`}
             >
-              <span className={`font-bold text-lg w-8 ${
+              <span className={`font-bold text-base sm:text-lg w-7 sm:w-8 ${
                 i === 0 ? 'text-yellow-400' : i === 1 ? 'text-gray-300' : i === 2 ? 'text-orange-400' : isKids ? 'text-white/50' : 'text-gray-600'
               }`}>
                 #{i + 1}
               </span>
-              <span className="text-lg">{getRankIcon(player.score)}</span>
+              <span className="text-base sm:text-lg">{getRankIcon(player.score)}</span>
               <div className="flex-1 min-w-0">
-                <div className={`font-semibold text-base truncate ${
+                <div className={`font-semibold text-sm sm:text-base truncate ${
                   isKids ? 'text-white' : 'text-gray-200 font-mono'
                 }`}>
                   {player.name}
                   {isYou && (
-                    <span className={`ml-2 text-sm ${isKids ? 'text-yellow-200' : 'text-cyan-400'}`}>
+                    <span className={`ml-2 text-xs sm:text-sm ${isKids ? 'text-yellow-200' : 'text-cyan-400'}`}>
                       (You)
                     </span>
                   )}
                 </div>
-                <div className={`text-sm ${isKids ? 'text-white/60' : 'text-gray-500 font-mono'}`}>
+                <div className={`text-xs sm:text-sm ${isKids ? 'text-white/60' : 'text-gray-500 font-mono'}`}>
                   {player.vaultsCracked} vault{player.vaultsCracked !== 1 ? 's' : ''} cracked
                 </div>
               </div>
-              <span className={`font-bold text-base ${
+              <span className={`font-bold text-sm sm:text-base ${
                 isKids ? 'text-yellow-200' : 'text-green-400 font-mono'
               }`}>
                 {getMetricValue(player)}

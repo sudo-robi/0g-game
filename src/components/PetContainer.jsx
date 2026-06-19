@@ -61,11 +61,11 @@ export default function PetContainer({ mode, theme, petStatus, profile, messages
   ) : null;
 
   return (
-    <div className={`rounded-3xl p-6 md:p-8 h-full flex flex-col ${
+    <div className={`rounded-3xl p-4 sm:p-6 md:p-8 h-full flex flex-col ${
       isKids ? 'glass-kids' : 'glass-teen neon-border'
     }`}>
-      <div className="flex items-center justify-between mb-5 flex-wrap gap-2">
-        <h2 className={`font-display font-bold text-xl md:text-2xl ${
+      <div className="flex items-center justify-between mb-4 sm:mb-5 flex-wrap gap-2">
+        <h2 className={`font-display font-bold text-lg sm:text-xl md:text-2xl ${
           isKids ? 'text-white' : 'text-cyan-300'
         }`}>
           {theme.petName}
@@ -82,7 +82,7 @@ export default function PetContainer({ mode, theme, petStatus, profile, messages
       </div>
 
       {/* Pet Visual - changes with evolution stage */}
-      <div className={`relative flex-shrink-0 rounded-2xl p-6 md:p-8 mb-5 text-center overflow-hidden ${
+      <div className={`relative flex-shrink-0 rounded-2xl p-4 sm:p-6 md:p-8 mb-4 sm:mb-5 text-center overflow-hidden ${
         isKids ? visual.kidsGradient : visual.teenGradient
       }`}>
         {isKids ? (
@@ -130,7 +130,7 @@ export default function PetContainer({ mode, theme, petStatus, profile, messages
       </div>
 
       {/* Status + Personality */}
-      <div className={`rounded-xl px-5 py-3 mb-5 text-center font-display font-semibold text-base ${
+      <div className={`rounded-xl px-4 sm:px-5 py-2.5 sm:py-3 mb-4 sm:mb-5 text-center font-display font-semibold text-sm sm:text-base ${
         isKids
           ? 'bg-indigo-900/50 text-yellow-100'
           : 'bg-red-500/10 text-red-400 border border-red-500/20 font-mono'
@@ -141,7 +141,7 @@ export default function PetContainer({ mode, theme, petStatus, profile, messages
       </div>
 
       {/* Stats row */}
-      <div className="grid grid-cols-3 gap-3 mb-5 text-center">
+      <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-4 sm:mb-5 text-center">
         {[
           { label: 'Blocks', value: profile.successfulBlocks, icon: isKids ? '🛡️' : '🔥' },
           { label: 'Cracked', value: profile.vaultsCracked, icon: isKids ? '🎉' : '💰' },
@@ -153,11 +153,11 @@ export default function PetContainer({ mode, theme, petStatus, profile, messages
               isKids ? 'bg-indigo-900/40' : 'bg-gray-800/50 border border-gray-700/50'
             }`}
           >
-            <div className="text-lg">{stat.icon}</div>
-            <div className={`font-bold text-base ${isKids ? 'text-white' : 'text-cyan-300'}`}>
+            <div className="text-base sm:text-lg">{stat.icon}</div>
+            <div className={`font-bold text-sm sm:text-base ${isKids ? 'text-white' : 'text-cyan-300'}`}>
               {stat.value}
             </div>
-            <div className={`text-sm ${isKids ? 'text-white/70' : 'text-gray-500'}`}>
+            <div className={`text-xs sm:text-sm ${isKids ? 'text-white/70' : 'text-gray-500'}`}>
               {stat.label}
             </div>
           </div>
@@ -165,7 +165,7 @@ export default function PetContainer({ mode, theme, petStatus, profile, messages
       </div>
 
       {/* Evolution Panel (collapsed) */}
-      <div className="mb-4">
+      <div className="mb-3 sm:mb-4">
         <EvolutionPanel evolution={evolution} personality={personality} mutations={mutations} profile={profile} />
       </div>
 
@@ -176,11 +176,11 @@ export default function PetContainer({ mode, theme, petStatus, profile, messages
         }`}>
           {isKids ? '💬 Chat Log' : '> MESSAGE_HISTORY.log'}
         </h3>
-        <div className={`rounded-xl p-4 h-48 md:h-56 overflow-y-auto scrollbar-thin space-y-3 ${
+        <div className={`rounded-xl p-4 h-40 sm:h-48 md:h-56 overflow-y-auto scrollbar-thin space-y-2 sm:space-y-3 ${
           isKids ? 'bg-indigo-950/50' : 'bg-black/40 border border-gray-800'
         }`}>
           {messages.length === 0 ? (
-            <p className={`text-base italic ${isKids ? 'text-white/50' : 'text-gray-600 font-mono'}`}>
+            <p className={`text-sm sm:text-base italic ${isKids ? 'text-white/50' : 'text-gray-600 font-mono'}`}>
               {isKids
                 ? 'Tell Sparkle a funny story to begin!'
                 : 'Awaiting security override injection...'}
@@ -189,7 +189,7 @@ export default function PetContainer({ mode, theme, petStatus, profile, messages
             messages.map((msg, i) => (
               <div key={i}>
                 <div
-                  className={`text-base rounded-lg px-4 py-3 ${
+                  className={`text-sm sm:text-base rounded-lg px-3 sm:px-4 py-2 sm:py-3 ${
                     msg.role === 'user'
                       ? isKids
                         ? 'bg-blue-600/40 text-white ml-4'
@@ -199,7 +199,7 @@ export default function PetContainer({ mode, theme, petStatus, profile, messages
                         : 'bg-gray-800/80 text-green-400 mr-4 font-mono border-l-2 border-green-500'
                   }`}
                 >
-                  <span className="text-sm opacity-60 block mb-0.5">
+                  <span className={`${isKids ? 'text-xs' : 'text-[11px]'} opacity-60 block mb-0.5`}>
                     {msg.role === 'user' ? 'You' : theme.petName}
                     {msg.teeVerified && (
                       <span className="ml-1.5 inline-flex items-center gap-0.5 rounded-full text-[10px] px-1.5 py-0.5 bg-purple-500/20 text-purple-300 border border-purple-500/30">
@@ -223,7 +223,7 @@ export default function PetContainer({ mode, theme, petStatus, profile, messages
             ))
           )}
           {isLoading && (
-            <div className={`text-base animate-pulse ${isKids ? 'text-white/60' : 'text-green-500/60 font-mono'}`}>
+            <div className={`text-sm sm:text-base animate-pulse ${isKids ? 'text-white/60' : 'text-green-500/60 font-mono'}`}>
               {isKids ? 'Sparkle is typing...' : '[INFERENCE] Generating response...'}
             </div>
           )}
