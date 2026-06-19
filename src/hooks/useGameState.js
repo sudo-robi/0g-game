@@ -489,6 +489,7 @@ export function useGameState(initialMode = 'kids') {
     showAcademy, setShowAcademy,
     showBoss, setShowBoss,
     showMarketplace, setShowMarketplace,
+    showUserVault, setShowUserVault,
     showSpectator, setShowSpectator,
     showDailyVault, setShowDailyVault,
     showDifficultyModal, setShowDifficultyModal,
