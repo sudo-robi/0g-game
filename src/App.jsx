@@ -23,7 +23,7 @@ import TreasureHuntPanel from './components/TreasureHuntPanel';
 import AttackReplayPanel from './components/AttackReplayPanel';
 import AIBattlePanel from './components/AIBattlePanel';
 import SecurityChallengePanel from './components/SecurityChallengePanel';
-import ZeroGContextBadge from './components/ZeroGContextBadge';
+
 import { DIFFICULTY_TIERS, PET_CLASSES, REPUTATION_PATHS, LEADERBOARD_CATEGORIES } from './config';
 import { useGameState } from './hooks/useGameState';
 
@@ -145,10 +145,7 @@ export default function App() {
                   </button>
                 ))}
               </div>
-              <div className="flex items-center gap-2 mb-2">
-                <ZeroGContextBadge type="da" />
-                <span className="font-mono text-xs text-gray-500">Streamed via 0G DA</span>
-              </div>
+
               <Leaderboard mode={game.mode} leaderboard={game.leaderboard} playerName={game.playerName} category={game.leaderboardCategory} />
             </div>
 
