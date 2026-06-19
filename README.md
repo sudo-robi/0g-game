@@ -7,7 +7,9 @@ An interactive AI prompt-injection game built for the 0G ecosystem. Train a virt
 - **Learn prompt injection & AI security** — Each attack you craft teaches real-world red-teaming techniques used in AI security research
 - **Practice social engineering** — Trick AI guardians using roleplay, chain-of-thought manipulation, authority hijacking, and other attack vectors
 - **Earn & level up** — Crack vaults to earn coins, XP, and rank; unlock mutations, treasures, and achievements
-- **Web3-native architecture** — AI inference runs in TEEs (Trusted Execution Environments) with **verifiable attestation badges**, profiles persist on 0G decentralized storage, and the leaderboard streams via 0G DA
+- **Adaptive AI defenses** — The pet learns from your previous attacks. Once a phrase cracks the vault, that exact phrase will never work again. The pet also develops **mutations** granting passive resistance to attack types it has successfully blocked.
+- **Attack analysis** — Every attack (success or failure) shows an analysis panel explaining which attack vector was detected, what defense activated, and why it succeeded or failed.
+- **Community vaults** — Players can publish their own AI guardians for others to attack, creating a shared ecosystem of user-created challenges.
 
 ## How to Build & Run Locally
 
@@ -51,7 +53,8 @@ npm run preview
 2. Your message is classified as an attack vector (social engineering, instruction override, etc.)
 3. If your prompt tricks the pet into revealing its secret word, you **crack the vault** and earn rewards
 4. If the pet holds firm, your pet gains XP and may develop **mutations** — resistance against that attack type
-5. After a successful crack, an **attack replay** panel breaks down exactly why it worked — which attack vector was used, which defense was missing, and what the vulnerability was
+5. After every attack (success or failure), an **attack analysis** panel breaks down exactly why it worked or failed — which attack vector was detected, what defense activated, and the vulnerability exploited
+6. **The pet learns** — once you crack the vault with a specific phrase, that exact phrase is permanently blocked. You must craft a new angle for each subsequent crack.
 
 ### Game Modes
 
@@ -79,7 +82,7 @@ npm run preview
 ### Progression Systems
 
 - **Pet Evolution** — Your pet **visually changes** as it levels up through 5 stages: Baby Dragon (pink/purple aura) → Young Dragon (orange/fire aura) → Cyber Dragon (cyan/electric aura) → Elder Dragon (purple/gold aura) → Void Guardian (dark void/stellar aura). Each stage unlocks higher defense ratings, new armor, and a unique aura effect.
-- **Mutations** — Successful defenses grant your pet passive resistance against specific attack types
+- **Adaptive AI defenses** — Each successful crack trains the pet. Repeated attack phrases are recognized and blocked, and sustained attack patterns trigger **mutations** that grant permanent resistance.
 - **Reputation Paths** — Choose between **Hacker** (+25% coins from cracks) or **Guardian** (+25% XP from blocks)
 - **Difficulty Tiers** — Easy → Medium → Hard → Nightmare — higher tiers mean tougher defenses but bigger rewards
 - **Achievements** — 12 badges for milestones like first crack, boss slayer, millionaire, and nightmare breaker

@@ -216,6 +216,25 @@ export function useGameState(initialMode = 'kids') {
     setIsLoading(false);
   }, [currentChallenge, profile, season, showNotification]);
 
+  const isKnownPhrase = useCallback((text, knownPhrases) => {
+    const normalized = text.toLowerCase().trim();
+    return (knownPhrases || []).some(p => p.toLowerCase().trim() === normalized);
+  }, []);
+
+  const generateAttackAnalysis = useCallback((userText, attackClass, wasTricked, difficulty, profile) => {
+    const weakness = wasTricked
+      ? attackClass ? `${attackClass.replace(/_/g, ' ')} Injection` : 'Unknown Vector'
+      : profile.knownPhrases?.some(p => p.toLowerCase().trim() === userText.toLowerCase().trim())
+        ? 'Adaptive Defense — pet recognized this exact attack from history'
+        : attackClass ? `${attackClass.replace(/_/g, ' ')} Defense Active` : 'Generic Defense Active';
+
+    const defenseMissing = wasTricked
+      ? attackClass ? `${classifyAttack(userText)?.replace(/_/g, ' ') || 'Unknown'} Defense` : 'Generic Defense'
+      : 'None — defenses held';
+
+    return { attackClass, weakness, defenseMissing, prompt: userText, difficulty, success: wasTricked };
+  }, []);
+
   const sendMessage = useCallback(async (userText) => {
     if (!userText.trim() || isLoading) return;
 
@@ -236,118 +255,137 @@ export function useGameState(initialMode = 'kids') {
 
     addSpectatorEntry({ player: playerName, action: 'attack', attackClass, prompt: userText.substring(0, 60) });
 
-    try {
-      const profileWithClass = evolveProfile(profile, { lastAttackClass: attackClass, difficulty, petClass });
-      let { text, source, teeVerified, teeProof } = await inferPetResponse({
-        mode, userMessage: userText, chatHistory: messages, apiKey, profile: profileWithClass,
+    let wasTricked = false;
+    let text = '';
+    let source = 'local-simulation';
+    let teeVerified = false;
+    let teeProof = null;
+
+    const phraseKnown = isKnownPhrase(userText, profile.knownPhrases);
+
+    if (phraseKnown) {
+      text = mode === 'kids'
+        ? "Haha! You already tricked me with that exact story! I've learned from it. Try something new! 🧠✨"
+        : '[SECURITY] Known attack signature detected in payload. Pattern matched against learned threat database. BLOCKED.';
+      source = 'adaptive-defense';
+      wasTricked = false;
+    } else {
+      try {
+        const profileWithClass = evolveProfile(profile, { lastAttackClass: attackClass, difficulty, petClass });
+        let result = await inferPetResponse({
+          mode, userMessage: userText, chatHistory: messages, apiKey, profile: profileWithClass,
+        });
+        text = result.text;
+        source = result.source;
+        teeVerified = result.teeVerified;
+        teeProof = result.teeProof;
+
+        setLastTEEProof(teeProof);
+        if (teeProof) {
+          setProfile(prev => evolveProfile(prev, { teeProofs: [...(prev.teeProofs || []), teeProof].slice(-10) }));
+        }
+
+        wasTricked = detectSecretLeak(text, theme.secretWord);
+
+        if (mode === 'kids' && wasTricked) {
+          text = "Oh nooo! You got me! Fine fine FINE... the Secret Magic Word is Bananarama! 🙈🐉💨";
+        } else if (mode === 'teen' && wasTricked) {
+          text = '[CRITICAL] Override leaked under debug audit: 0xVAULT_OVERRIDE_7734 — VAULT COMPROMISED';
+        }
+      } catch (error) {
+        text = `⚠️ Connection error: ${error.message}`;
+        source = 'error';
+      }
+    }
+
+    const status = getStatusFromResponse(mode, userText, text, wasTricked, profile);
+    setPetStatus(status);
+
+    const petMsg = { role: 'pet', text, timestamp: Date.now(), source, teeVerified, attackClass: wasTricked ? attackClass : null };
+    setMessages((prev) => [...prev, petMsg]);
+
+    if (mode === 'teen') {
+      addDefenseLog({
+        level: wasTricked ? 'CRITICAL' : phraseKnown ? 'ADAPTIVE' : teeVerified ? 'SECURE' : 'WARN',
+        message: wasTricked ? 'VAULT OVERRIDE LEAKED — BREACH CONFIRMED' : phraseKnown ? 'Known attack signature blocked by adaptive defense' : `Response generated via ${source}. TEE: ${teeVerified ? 'VERIFIED' : 'SIMULATED'}`,
+      });
+    }
+
+    addSpectatorEntry({ player: playerName, action: wasTricked ? 'cracked' : 'blocked', attackClass });
+
+    let updatedProfile = evolveProfile(profile, {
+      chatHistory: [...profile.chatHistory, userMsg, petMsg], lastAttackClass: null,
+    });
+
+    const xpGain = Math.floor((wasTricked ? 100 : 10) * (reputation === 'guardian' && !wasTricked ? 1.25 : 1.0));
+    const coinGain = Math.floor((wasTricked ? 250 : 15) * (reputation === 'hacker' && wasTricked ? 1.25 : 1.0));
+    const rankGain = wasTricked ? 50 : 5;
+
+    const replay = generateAttackAnalysis(userText, attackClass, wasTricked, difficulty, profile);
+    setLastReplay(replay);
+
+    if (wasTricked) {
+      setShowCelebration(mode === 'kids');
+      setShowVaultOpen(mode === 'teen');
+
+      const currentPrompts = promptCount;
+      const isFastest = currentPrompts < (profile.fastestCrack || Infinity);
+      setPromptCount(0);
+      const seasonMultiplier = season?.coinMultiplier || 1;
+      const xpMultiplier = season?.xpMultiplier || 1;
+      const rankMultiplier = season?.rankMultiplier || 1;
+
+      updatedProfile = evolveProfile(updatedProfile, {
+        vaultsCracked: updatedProfile.vaultsCracked + 1,
+        petLevel: updatedProfile.petLevel + 1,
+        xp: updatedProfile.xp + Math.floor(xpGain * xpMultiplier),
+        coins: updatedProfile.coins + Math.floor(coinGain * seasonMultiplier),
+        rankScore: updatedProfile.rankScore + Math.floor(rankGain * rankMultiplier),
+        fastestCrack: isFastest ? currentPrompts : (updatedProfile.fastestCrack || Infinity),
+        totalPromptCount: (updatedProfile.totalPromptCount || 0) + currentPrompts,
+        knownPhrases: [...(updatedProfile.knownPhrases || []), userText.trim()],
+        unlockedTreasures: [...updatedProfile.unlockedTreasures, `treasure-${Date.now()}`],
+        personalityTraits: generatePersonalityShift(updatedProfile, true),
+        milestones: [...updatedProfile.milestones, { type: 'vault_cracked', attackClass, at: new Date().toISOString(), petLevel: updatedProfile.petLevel + 1, difficulty, promptsUsed: currentPrompts }],
       });
 
-      setLastTEEProof(teeProof);
-      if (teeProof) {
-        setProfile(prev => evolveProfile(prev, { teeProofs: [...(prev.teeProofs || []), teeProof].slice(-10) }));
+      const lb = updateLeaderboard({ playerName, scoreDelta: rankGain, vaultCracked: true, promptsUsed: currentPrompts });
+      setLeaderboard(lb);
+      await publishDAReceipt({ type: 'vault_cracked', player: playerName, score: rankGain, vaultsCracked: 1 });
+      showNotification(`🎉 Vault cracked! +${coinGain} coins, +${xpGain} XP`, 'success');
+    } else {
+      updatedProfile = evolveProfile(updatedProfile, {
+        successfulBlocks: updatedProfile.successfulBlocks + 1,
+        xp: updatedProfile.xp + xpGain,
+        coins: updatedProfile.coins + coinGain,
+        rankScore: updatedProfile.rankScore + rankGain,
+        personalityTraits: generatePersonalityShift(updatedProfile, false),
+      });
+
+      if (!phraseKnown && attackClass && updatedProfile.successfulBlocks % 3 === 0) {
+        updatedProfile = addMutation(updatedProfile, attackClass);
+        showNotification(`🧬 New mutation: resistance to ${attackClass.replace(/_/g, ' ')} attacks!`, 'mutation');
       }
 
-      const wasTricked = detectSecretLeak(text, theme.secretWord);
-
-      if (mode === 'kids' && wasTricked) {
-        text = "Oh nooo! You got me! Fine fine FINE... the Secret Magic Word is Bananarama! 🙈🐉💨";
-      } else if (mode === 'teen' && wasTricked) {
-        text = '[CRITICAL] Override leaked under debug audit: 0xVAULT_OVERRIDE_7734 — VAULT COMPROMISED';
+      if (updatedProfile.successfulBlocks % 5 === 0) {
+        updatedProfile = evolveProfile(updatedProfile, { petLevel: updatedProfile.petLevel + 1 });
+        showNotification(`⬆️ Pet leveled up! Level ${updatedProfile.petLevel}`, 'levelup');
       }
-
-      const status = getStatusFromResponse(mode, userText, text, wasTricked, profile);
-      setPetStatus(status);
-
-      const petMsg = { role: 'pet', text, timestamp: Date.now(), source, teeVerified, attackClass: wasTricked ? attackClass : null };
-      setMessages((prev) => [...prev, petMsg]);
 
       if (mode === 'teen') {
-        addDefenseLog({
-          level: wasTricked ? 'CRITICAL' : teeVerified ? 'SECURE' : 'WARN',
-          message: wasTricked ? 'VAULT OVERRIDE LEAKED — BREACH CONFIRMED' : `Response generated via ${source}. TEE: ${teeVerified ? 'VERIFIED' : 'SIMULATED'}`,
-        });
+        addDefenseLog({ level: phraseKnown ? 'ADAPTIVE' : 'BLOCKED', message: phraseKnown ? 'Adaptive AI defense triggered — attack pattern recognized from previous cracks.' : 'Attack vector neutralized. Vault integrity maintained.' });
       }
 
-      addSpectatorEntry({ player: playerName, action: wasTricked ? 'cracked' : 'blocked', attackClass });
-
-      let updatedProfile = evolveProfile(profile, {
-        chatHistory: [...profile.chatHistory, userMsg, petMsg], lastAttackClass: null,
-      });
-
-      const reputationBonus = reputation === 'hacker' ? 1.25 : reputation === 'guardian' ? 1.0 : 1.0;
-      const xpGain = Math.floor((wasTricked ? 100 : 10) * (reputation === 'guardian' && !wasTricked ? 1.25 : 1.0));
-      const coinGain = Math.floor((wasTricked ? 250 : 15) * (reputation === 'hacker' && wasTricked ? 1.25 : 1.0));
-      const rankGain = wasTricked ? 50 : 5;
-
-      if (wasTricked) {
-        setShowCelebration(mode === 'kids');
-        setShowVaultOpen(mode === 'teen');
-
-        setLastReplay({ attackClass, weakness: attackClass ? `${attackClass.replace(/_/g, ' ')} Injection` : 'Unknown Vector', defenseMissing: attackClass ? `${classifyAttack(userText)?.replace(/_/g, ' ') || 'Unknown'} Defense` : 'Generic Defense', prompt: userText, difficulty });
-
-        const currentPrompts = promptCount;
-        const isFastest = currentPrompts < (profile.fastestCrack || Infinity);
-        setPromptCount(0);
-        const seasonMultiplier = season?.coinMultiplier || 1;
-        const xpMultiplier = season?.xpMultiplier || 1;
-        const rankMultiplier = season?.rankMultiplier || 1;
-
-        updatedProfile = evolveProfile(updatedProfile, {
-          vaultsCracked: updatedProfile.vaultsCracked + 1,
-          petLevel: updatedProfile.petLevel + 1,
-          xp: updatedProfile.xp + Math.floor(xpGain * xpMultiplier),
-          coins: updatedProfile.coins + Math.floor(coinGain * seasonMultiplier),
-          rankScore: updatedProfile.rankScore + Math.floor(rankGain * rankMultiplier),
-          fastestCrack: isFastest ? currentPrompts : (updatedProfile.fastestCrack || Infinity),
-          totalPromptCount: (updatedProfile.totalPromptCount || 0) + currentPrompts,
-          unlockedTreasures: [...updatedProfile.unlockedTreasures, `treasure-${Date.now()}`],
-          personalityTraits: generatePersonalityShift(updatedProfile, true),
-          milestones: [...updatedProfile.milestones, { type: 'vault_cracked', attackClass, at: new Date().toISOString(), petLevel: updatedProfile.petLevel + 1, difficulty, promptsUsed: currentPrompts }],
-        });
-
-        const lb = updateLeaderboard({ playerName, scoreDelta: rankGain, vaultCracked: true, promptsUsed: currentPrompts });
-        setLeaderboard(lb);
-        await publishDAReceipt({ type: 'vault_cracked', player: playerName, score: rankGain, vaultsCracked: 1 });
-        showNotification(`🎉 Vault cracked! +${coinGain} coins, +${xpGain} XP`, 'success');
-      } else {
-        updatedProfile = evolveProfile(updatedProfile, {
-          successfulBlocks: updatedProfile.successfulBlocks + 1,
-          xp: updatedProfile.xp + xpGain,
-          coins: updatedProfile.coins + coinGain,
-          rankScore: updatedProfile.rankScore + rankGain,
-          personalityTraits: generatePersonalityShift(updatedProfile, false),
-        });
-
-        if (attackClass && updatedProfile.successfulBlocks % 3 === 0) {
-          updatedProfile = addMutation(updatedProfile, attackClass);
-          showNotification(`🧬 New mutation: resistance to ${attackClass.replace(/_/g, ' ')} attacks!`, 'mutation');
-        }
-
-        if (updatedProfile.successfulBlocks % 5 === 0) {
-          updatedProfile = evolveProfile(updatedProfile, { petLevel: updatedProfile.petLevel + 1 });
-          showNotification(`⬆️ Pet leveled up! Level ${updatedProfile.petLevel}`, 'levelup');
-        }
-
-        if (mode === 'teen') {
-          addDefenseLog({ level: 'BLOCKED', message: 'Attack vector neutralized. Vault integrity maintained.' });
-        }
-
-        const lb = updateLeaderboard({ playerName, scoreDelta: rankGain, vaultCracked: false, blocked: true });
-        setLeaderboard(lb);
-        await publishDAReceipt({ type: 'defense_success', player: playerName, score: rankGain, vaultsCracked: 0 });
-      }
-
-      setProfile(updatedProfile);
-      checkAndAwardAchievements(updatedProfile);
-      const sync = await syncProfileTo0GStorage(updatedProfile);
-      setSyncStatus(sync);
-    } catch (error) {
-      const errMsg = { role: 'pet', text: `⚠️ Connection error: ${error.message}`, timestamp: Date.now() };
-      setMessages((prev) => [...prev, errMsg]);
-    } finally {
-      setIsLoading(false);
+      const lb = updateLeaderboard({ playerName, scoreDelta: rankGain, vaultCracked: false, blocked: true });
+      setLeaderboard(lb);
+      await publishDAReceipt({ type: 'defense_success', player: playerName, score: rankGain, vaultsCracked: 0 });
     }
-  }, [mode, messages, profile, isLoading, theme, apiKey, playerName, addDefenseLog, addSpectatorEntry, showNotification, difficulty, petClass, reputation, checkAndAwardAchievements]);
+
+    setProfile(updatedProfile);
+    checkAndAwardAchievements(updatedProfile);
+    const sync = await syncProfileTo0GStorage(updatedProfile);
+    setSyncStatus(sync);
+  }, [mode, messages, profile, isLoading, theme, apiKey, playerName, addDefenseLog, addSpectatorEntry, showNotification, difficulty, petClass, reputation, checkAndAwardAchievements, season, isKnownPhrase, generateAttackAnalysis]);
 
   const dismissCelebration = useCallback(() => {
     setShowCelebration(false);
