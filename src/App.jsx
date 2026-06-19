@@ -69,7 +69,7 @@ export default function App() {
         <div className="flex flex-wrap justify-center gap-2">
           <button onClick={() => { closeAllModals(); game.setShowDifficultyModal(true); }}
             className={`px-3 py-1.5 rounded-lg text-xs font-mono font-semibold border transition-all ${currentDifficulty.bg} ${currentDifficulty.border} ${currentDifficulty.color}`}>
-            {currentDifficulty.icon} {currentDifficulty.label}
+            ⚙️ {currentDifficulty.icon} {currentDifficulty.label}
           </button>
           <button onClick={() => { closeAllModals(); game.setShowPetClassModal(true); }}
             className={`px-3 py-1.5 rounded-lg text-xs font-mono font-semibold border transition-all bg-purple-900/30 border-purple-500/30 text-purple-300`}>
