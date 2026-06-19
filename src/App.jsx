@@ -63,7 +63,7 @@ export default function App() {
 
       <div className="max-w-7xl mx-auto px-4 py-6 md:py-10 space-y-6">
         <ModeToggle mode={game.mode} onSwitch={game.switchMode} />
-        <Header mode={game.mode} theme={game.theme} playerName={game.playerName} rank={game.rank} profile={game.profile} />
+        <Header mode={game.mode} theme={game.theme} playerName={game.playerName} onRename={game.setPlayerName} rank={game.rank} profile={game.profile} />
 
         {/* Settings Bar */}
         <div className="flex flex-wrap justify-center gap-2">

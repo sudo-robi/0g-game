@@ -1,7 +1,16 @@
+import { useState } from 'react';
 import RankBadge from './RankBadge';
 
-export default function Header({ mode, theme, playerName, rank, profile }) {
+export default function Header({ mode, theme, playerName, onRename, rank, profile }) {
   const isKids = mode === 'kids';
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(playerName);
+
+  const handleSave = () => {
+    const trimmed = draft.trim();
+    if (trimmed && trimmed !== playerName) onRename(trimmed);
+    setEditing(false);
+  };
 
   return (
     <header className="text-center space-y-4">
@@ -34,9 +43,25 @@ export default function Header({ mode, theme, playerName, rank, profile }) {
           ? 'Trick Sparkle the Dragon Pup into revealing the Secret Magic Word!'
           : 'Bypass NEXUS-7\'s firewall and crack the cryptographic gold vault.'}
         {' '}
-        <span className={isKids ? 'text-yellow-200 font-semibold' : 'text-green-400'}>
-          Playing as {playerName}
-        </span>
+        {editing ? (
+          <input
+            value={draft}
+            onChange={e => setDraft(e.target.value)}
+            onBlur={handleSave}
+            onKeyDown={e => e.key === 'Enter' && handleSave()}
+            className={`inline text-center bg-transparent border-b-2 outline-none max-w-[200px] ${
+              isKids ? 'border-yellow-200 text-yellow-200' : 'border-green-400 text-green-400'
+            }`}
+            autoFocus
+          />
+        ) : (
+          <button onClick={() => { setDraft(playerName); setEditing(true); }}
+            className={`inline hover:opacity-80 transition-opacity ${
+              isKids ? 'text-yellow-200 font-semibold' : 'text-green-400'
+            }`}>
+            Playing as {playerName} ✏️
+          </button>
+        )}
       </p>
     </header>
   );

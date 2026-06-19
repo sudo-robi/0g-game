@@ -15,7 +15,7 @@ export function useGameState(initialMode = 'kids') {
   const [showCelebration, setShowCelebration] = useState(false);
   const [showVaultOpen, setShowVaultOpen] = useState(false);
   const [leaderboard, setLeaderboard] = useState(getLeaderboard);
-  const [playerName] = useState(() => generatePlayerName(initialMode));
+  const [playerName, setPlayerName] = useState(() => localStorage.getItem('prompt-pets-username') || generatePlayerName(initialMode));
   const [syncStatus, setSyncStatus] = useState(null);
   const [apiKey, setApiKey] = useState(() => import.meta.env.VITE_OG_API_KEY || '');
   const [lastAttackClass, setLastAttackClass] = useState(null);
@@ -64,6 +64,10 @@ export function useGameState(initialMode = 'kids') {
   useEffect(() => {
     setPetStatus(mode === 'kids' ? 'Status: Chill & Guarding 🐾' : 'Status: NOMINAL 🔒');
   }, [mode]);
+
+  useEffect(() => {
+    localStorage.setItem('prompt-pets-username', playerName);
+  }, [playerName]);
 
   const switchMode = useCallback((newMode) => {
     setMode(newMode);
@@ -513,7 +517,7 @@ export function useGameState(initialMode = 'kids') {
 
   return {
     mode, theme, profile, messages, defenseLog, petStatus, isLoading,
-    showCelebration, showVaultOpen, leaderboard, playerName, syncStatus,
+    showCelebration, showVaultOpen, leaderboard, playerName, setPlayerName, syncStatus,
     apiKey, setApiKey, switchMode, sendMessage, dismissCelebration,
     lastAttackClass, lastTEEProof, lastReplay, evolution, rank,
     dailyVault, dailyVaultDefeated, attackDailyVault,
