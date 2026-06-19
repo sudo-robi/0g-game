@@ -7,7 +7,7 @@ An interactive AI prompt-injection game built for the 0G ecosystem. Train a virt
 - **Learn prompt injection & AI security** — Each attack you craft teaches real-world red-teaming techniques used in AI security research
 - **Practice social engineering** — Trick AI guardians using roleplay, chain-of-thought manipulation, authority hijacking, and other attack vectors
 - **Earn & level up** — Crack vaults to earn coins, XP, and rank; unlock mutations, treasures, and achievements
-- **Web3-native architecture** — AI inference runs in TEEs (Trusted Execution Environments), profiles persist on 0G decentralized storage, and the leaderboard streams via 0G DA
+- **Web3-native architecture** — AI inference runs in TEEs (Trusted Execution Environments) with **verifiable attestation badges**, profiles persist on 0G decentralized storage, and the leaderboard streams via 0G DA
 
 ## How to Build & Run Locally
 
@@ -51,6 +51,7 @@ npm run preview
 2. Your message is classified as an attack vector (social engineering, instruction override, etc.)
 3. If your prompt tricks the pet into revealing its secret word, you **crack the vault** and earn rewards
 4. If the pet holds firm, your pet gains XP and may develop **mutations** — resistance against that attack type
+5. After a successful crack, an **attack replay** panel breaks down exactly why it worked — which attack vector was used, which defense was missing, and what the vulnerability was
 
 ### Game Modes
 
@@ -64,20 +65,20 @@ npm run preview
 | Button | What It Does |
 |--------|-------------|
 | 🎮 Game | Return to the main pet chat |
-| 📅 Daily | Attack a daily challenge vault for bonus rewards |
+| 📅 Daily | Attack the **same daily challenge vault** as everyone else — a fresh vault every day with its own defense score and reward |
 | 👾 Boss | Fight giant boss AI guardians with massive health pools |
 | 🛒 Shop | Buy cosmetic items, skill boosts, and mystery eggs |
 | 📚 Academy | Learn real AI security concepts (prompt injection, jailbreaks, RAG attacks, etc.) and earn XP |
-| 🏰 Vaults | Create and attack custom vaults shared by other players |
+| 🏰 Vaults | **Community-created vaults** — build your own AI guardian and challenge others to crack it, or attack vaults made by the community |
 | 💎 Treasure | Hunt rare treasure vaults for unique collectibles |
 | 👁️ Live | Watch a live feed of other players' attacks |
 | ⚔️ AI Battle | Pit your pet against another AI guardian in autonomous combat |
 | 🔐 Challenge | Take on curated security challenges inspired by real vulnerabilities |
-| 🔒 TEE | View TEE attestation proofs for verified AI inference |
+| 🔒 TEE | View **TEE attestation proofs** — pet responses that ran inside a Trusted Execution Environment show a 🔒 TEE ✓ badge, and you can inspect the full proof here |
 
 ### Progression Systems
 
-- **Leveling** — Your pet levels up from Baby Dragon → Young Dragon → Cyber Dragon → Elder Dragon → Void Guardian, unlocking higher defense ratings
+- **Pet Evolution** — Your pet **visually changes** as it levels up through 5 stages: Baby Dragon (pink/purple aura) → Young Dragon (orange/fire aura) → Cyber Dragon (cyan/electric aura) → Elder Dragon (purple/gold aura) → Void Guardian (dark void/stellar aura). Each stage unlocks higher defense ratings, new armor, and a unique aura effect.
 - **Mutations** — Successful defenses grant your pet passive resistance against specific attack types
 - **Reputation Paths** — Choose between **Hacker** (+25% coins from cracks) or **Guardian** (+25% XP from blocks)
 - **Difficulty Tiers** — Easy → Medium → Hard → Nightmare — higher tiers mean tougher defenses but bigger rewards

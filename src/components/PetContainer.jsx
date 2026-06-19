@@ -2,11 +2,63 @@ import AttackClassBadge from './AttackClassBadge';
 import EvolutionPanel from './EvolutionPanel';
 import { getPersonalityForLevel, getEvolutionStage } from '../config';
 
+const EVOLUTION_VISUALS = {
+  'Baby Dragon': {
+    kidsGradient: 'bg-gradient-to-br from-pink-400/40 to-purple-500/40',
+    teenGradient: 'bg-black/50 border border-cyan-500/20',
+    particles: '✨',
+    particleCount: 8,
+    kidsText: 'text-white/90',
+    teenText: 'text-green-400',
+  },
+  'Young Dragon': {
+    kidsGradient: 'bg-gradient-to-br from-orange-400/40 to-red-500/40',
+    teenGradient: 'bg-black/50 border border-orange-500/30',
+    particles: '🔥',
+    particleCount: 10,
+    kidsText: 'text-yellow-100',
+    teenText: 'text-orange-400',
+  },
+  'Cyber Dragon': {
+    kidsGradient: 'bg-gradient-to-br from-cyan-400/40 to-blue-600/40',
+    teenGradient: 'bg-black/50 border border-cyan-400/40',
+    particles: '⚡',
+    particleCount: 12,
+    kidsText: 'text-cyan-100',
+    teenText: 'text-cyan-400',
+  },
+  'Elder Dragon': {
+    kidsGradient: 'bg-gradient-to-br from-purple-400/40 to-yellow-500/30',
+    teenGradient: 'bg-black/50 border border-purple-400/40',
+    particles: '👁️',
+    particleCount: 14,
+    kidsText: 'text-purple-100',
+    teenText: 'text-purple-400',
+  },
+  'Void Guardian': {
+    kidsGradient: 'bg-gradient-to-br from-indigo-900/60 to-black/80',
+    teenGradient: 'bg-black/70 border border-indigo-500/40',
+    particles: '🌌',
+    particleCount: 16,
+    kidsText: 'text-indigo-200',
+    teenText: 'text-indigo-400',
+  },
+};
+
 export default function PetContainer({ mode, theme, petStatus, profile, messages, isLoading, lastAttackClass }) {
   const isKids = mode === 'kids';
   const evolution = getEvolutionStage(profile.petLevel);
   const personality = getPersonalityForLevel(profile.petLevel, profile.successfulBlocks);
   const mutations = profile.mutations || [];
+  const visual = EVOLUTION_VISUALS[evolution.title] || EVOLUTION_VISUALS['Baby Dragon'];
+  const lastTeeVerified = messages.length > 0 && messages[messages.length - 1]?.teeVerified;
+
+  const teeBadge = lastTeeVerified ? (
+    <span className="inline-flex items-center gap-1 rounded-full text-[10px] font-mono font-semibold px-2 py-0.5 bg-purple-500/10 border border-purple-500/20 text-purple-400">
+      <span>🔒</span>
+      <span>TEE ✓</span>
+    </span>
+  ) : null;
 
   return (
     <div className={`rounded-3xl p-6 md:p-8 h-full flex flex-col ${
@@ -17,6 +69,7 @@ export default function PetContainer({ mode, theme, petStatus, profile, messages
           isKids ? 'text-white' : 'text-cyan-300'
         }`}>
           {theme.petName}
+          {teeBadge && <span className="ml-2 align-middle">{teeBadge}</span>}
         </h2>
         <div className="flex items-center gap-2">
           {lastAttackClass && <AttackClassBadge attackId={lastAttackClass} />}
@@ -28,48 +81,50 @@ export default function PetContainer({ mode, theme, petStatus, profile, messages
         </div>
       </div>
 
-      {/* Pet Visual */}
+      {/* Pet Visual - changes with evolution stage */}
       <div className={`relative flex-shrink-0 rounded-2xl p-6 md:p-8 mb-5 text-center overflow-hidden ${
-        isKids
-          ? 'bg-gradient-to-br from-pink-400/40 to-purple-500/40'
-          : 'bg-black/50 border border-cyan-500/20'
+        isKids ? visual.kidsGradient : visual.teenGradient
       }`}>
         {isKids ? (
           <>
             <div className="absolute inset-0 opacity-20">
-              {[...Array(8)].map((_, i) => (
+              {[...Array(visual.particleCount)].map((_, i) => (
                 <span
                   key={i}
                   className="absolute text-2xl animate-sparkle"
                   style={{
-                    left: `${10 + i * 12}%`,
-                    top: `${20 + (i % 3) * 25}%`,
-                    animationDelay: `${i * 0.2}s`,
+                    left: `${5 + (i % 8) * 12}%`,
+                    top: `${15 + (i % 4) * 22}%`,
+                    animationDelay: `${i * 0.15}s`,
                   }}
                 >
-                  ✨
+                  {visual.particles}
                 </span>
               ))}
             </div>
             <div className="text-8xl md:text-9xl animate-float relative z-10">
               {evolution.emoji}
             </div>
-            <p className="font-display text-white/90 mt-2 text-base">
-              {personality.tagline} 🛡️
+            <p className={`font-display mt-2 text-base ${visual.kidsText}`}>
+              {visual.particles} {personality.tagline}
             </p>
+            {teeBadge && <div className="mt-2">{teeBadge}</div>}
           </>
         ) : (
           <>
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
               <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/5 to-transparent animate-scanline" />
             </div>
-            <div className="text-7xl md:text-8xl relative z-10 animate-pulse-glow inline-block rounded-full">
+            <div className={`text-7xl md:text-8xl relative z-10 inline-block rounded-full ${
+              evolution.title === 'Void Guardian' ? 'animate-pulse-slow' : 'animate-pulse-glow'
+            }`}>
               {evolution.emoji}
             </div>
-            <div className="font-mono text-sm text-green-400 mt-3 space-y-1">
+            <div className={`font-mono text-sm mt-3 space-y-1 ${visual.teenText}`}>
               <p>[VAULT] {evolution.armor} Armor — {evolution.aura} Aura ACTIVE</p>
               <p>[TEE] Attestation: VALID · Evolution: {evolution.title}</p>
             </div>
+            {teeBadge && <div className="mt-3">{teeBadge}</div>}
           </>
         )}
       </div>
@@ -146,8 +201,16 @@ export default function PetContainer({ mode, theme, petStatus, profile, messages
                 >
                   <span className="text-sm opacity-60 block mb-0.5">
                     {msg.role === 'user' ? 'You' : theme.petName}
-                    {msg.teeVerified && ' · TEE ✓'}
-                    {msg.source === 'local-simulation' && ' · SIM'}
+                    {msg.teeVerified && (
+                      <span className="ml-1.5 inline-flex items-center gap-0.5 rounded-full text-[10px] px-1.5 py-0.5 bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                        🔒 TEE
+                      </span>
+                    )}
+                    {msg.source === 'local-simulation' && (
+                      <span className="ml-1.5 inline-flex items-center gap-0.5 rounded-full text-[10px] px-1.5 py-0.5 bg-yellow-500/20 text-yellow-300 border border-yellow-500/30">
+                        ⚡ SIM
+                      </span>
+                    )}
                   </span>
                   {msg.text}
                 </div>
