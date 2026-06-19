@@ -59,7 +59,7 @@ export default function Header({ mode, theme, playerName, onRename, rank, profil
             className={`inline hover:opacity-80 transition-opacity ${
               isKids ? 'text-yellow-200 font-semibold' : 'text-green-400'
             }`}>
-            Playing as {playerName} ✏️
+            Playing as {playerName}
           </button>
         )}
       </p>

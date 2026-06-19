@@ -161,7 +161,7 @@ export function useGameState(initialMode = 'kids') {
       ? `✅ ${battleOpponent.name}'s vault CRACKED! ${profile.petName || 'Your Pet'} wins!`
       : `❌ ${battleOpponent.name} defended successfully. Your pet was blocked.`
     );
-    log.push(`📊 Power comparison: ${myPower} vs ${oppPower}`);
+    log.push(`Power comparison: ${myPower} vs ${oppPower}`);
 
     setBattleLog(log);
     setBattleResult(myWin ? 'win' : 'lose');

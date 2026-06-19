@@ -131,7 +131,7 @@ export default function App() {
             {/* Leaderboard Categories */}
             <div className={`rounded-3xl p-6 ${isKids ? 'glass-kids' : 'glass-teen neon-border'}`}>
               <h2 className={`font-display font-bold text-lg mb-3 ${isKids ? 'text-white' : 'text-cyan-300 font-mono'}`}>
-                📊 Leaderboard
+                Leaderboard
               </h2>
               <div className="flex gap-1 mb-4 flex-wrap">
                 {LEADERBOARD_CATEGORIES.map(cat => (
