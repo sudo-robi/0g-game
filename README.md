@@ -1,15 +1,51 @@
 # Prompt Pets: Break the Vault!
 
-An interactive AI prompt-injection game built for the 0G ecosystem. Train a virtual pet by cracking AI vaults — the better your prompt engineering, the more you earn.
+An interactive AI prompt-injection game built entirely on the **0G ecosystem**. Train a virtual pet by cracking AI vaults — the better your prompt engineering, the more you earn. Every inference runs in a TEE, every pet state is stored immutably, and every leaderboard update is published to DA.
+
+---
+
+## 🏗️ 0G Ecosystem Architecture
+
+This app demonstrates the full 0G stack across three integrated layers:
+
+### 🖥️ 0G Decentralized Compute — The Hacking Engine
+
+Player prompts are routed directly through the **0G Private Computer Router API** using frontier models like GLM-5 and Qwen 3.7 Max. Every inference executes inside a **hardware-isolated Trusted Execution Environment (TEE)** , guaranteeing:
+
+- **Absolute fairness** — Neither the game creator nor any malicious script can tamper with or spy on the pet's prompt evaluations
+- **Verifiable attestation** — Each response includes a cryptographic TEE proof that can be inspected via the 🔒 TEE button
+- **Privacy** — Your attack strategies remain confidential inside the secure enclave
+
+> Endpoint: `https://router-api.0g.ai/v1/chat/completions`
+
+### 💾 0G Decentralized Storage — The Pet's Memory Vault
+
+Every time a pet successfully defends its vault or gets tricked, its **updated personality traits, defense log, visual mutations, and evolution stage** are saved permanently as an immutable profile object on **0G Storage**. This makes each pet:
+
+- **A genuinely persistent, decentralized companion** — history cannot be wiped or faked
+- **Portable across sessions** — your pet's full state is recoverable from the storage layer
+- **Immutable** — profile versions increment with every change, creating a verifiable audit trail
+
+> Schema: `prompt-pets-profile-v1` — synced to `0g-mainnet`
+
+### 📡 0G Data Availability — The Live Leaderboard
+
+Every vault crack and successful defense publishes a **DA transaction receipt** to the **0G DA Layer**, streaming real-time gameplay data to the leaderboard with low fees and full verifiability. The leaderboard sorts by multiple categories (vaults cracked, blocks, fastest crack, win rate), all backed by on-chain DA receipts.
+
+> Layer: `0g-data-availability`
+
+---
 
 ## Why People Use It
 
-- **Learn prompt injection & AI security** — Each attack you craft teaches real-world red-teaming techniques used in AI security research
+- **Learn prompt injection & AI security** — Each attack you craft teaches real-world red-teaming techniques used in AI security research, all executed inside verifiable TEEs
 - **Practice social engineering** — Trick AI guardians using roleplay, chain-of-thought manipulation, authority hijacking, and other attack vectors
 - **Earn & level up** — Crack vaults to earn coins, XP, and rank; unlock mutations, treasures, and achievements
 - **Adaptive AI defenses** — The pet learns from your previous attacks. Once a phrase cracks the vault, that exact phrase will never work again. The pet also develops **mutations** granting passive resistance to attack types it has successfully blocked.
 - **Attack analysis** — Every attack (success or failure) shows an analysis panel explaining which attack vector was detected, what defense activated, and why it succeeded or failed.
 - **Community vaults** — Players can publish their own AI guardians for others to attack, creating a shared ecosystem of user-created challenges.
+
+---
 
 ## How to Build & Run Locally
 
@@ -19,24 +55,21 @@ An interactive AI prompt-injection game built for the 0G ecosystem. Train a virt
 ### Setup
 
 ```bash
-# Install dependencies
 npm install
-
-# Start development server
 npm run dev
 ```
 
-Open http://localhost:5173 to play instantly in local simulation mode — no API key needed.
+Open http://localhost:5173 to play instantly in **local simulation mode** — no API key needed. The app is fully playable offline.
 
-### Optional: Live AI Inference
+### Enable Live TEE Inference
 
-For real AI-powered pet responses (instead of local simulation), create a `.env` file:
+For real AI-powered pet responses that run inside 0G TEEs, create a `.env` file:
 
 ```
 VITE_OG_API_KEY=sk-your-key-here
 ```
 
-Get a key from the [0G Router](https://router.0g.ai). Without one, the app runs fully playable in simulation mode.
+Get a key from the [0G Router](https://router.0g.ai). With the key set, every prompt is routed through the 0G Private Computer and you'll see 🔒 TEE ✓ badges on verified responses.
 
 ### Production Build
 
@@ -44,6 +77,8 @@ Get a key from the [0G Router](https://router.0g.ai). Without one, the app runs 
 npm run build
 npm run preview
 ```
+
+---
 
 ## How to Play
 
@@ -77,29 +112,23 @@ npm run preview
 | 👁️ Live | Watch a live feed of other players' attacks |
 | ⚔️ AI Battle | Pit your pet against another AI guardian in autonomous combat |
 | 🔐 Challenge | Take on curated security challenges inspired by real vulnerabilities |
-| 🔒 TEE | View **TEE attestation proofs** — pet responses that ran inside a Trusted Execution Environment show a 🔒 TEE ✓ badge, and you can inspect the full proof here |
+| 🔒 TEE | View **TEE attestation proofs** — inspect the full cryptographic proof that inference ran inside a Trusted Execution Environment |
 
 ### Progression Systems
 
-- **Pet Evolution** — Your pet **visually changes** as it levels up through 5 stages: Baby Dragon (pink/purple aura) → Young Dragon (orange/fire aura) → Cyber Dragon (cyan/electric aura) → Elder Dragon (purple/gold aura) → Void Guardian (dark void/stellar aura). Each stage unlocks higher defense ratings, new armor, and a unique aura effect.
+- **Pet Evolution** — Your pet **visually changes** as it levels up through 5 stages: Baby Dragon (pink/purple aura) → Young Dragon (orange/fire aura) → Cyber Dragon (cyan/electric aura) → Elder Dragon (purple/gold aura) → Void Guardian (dark void/stellar aura). Each stage unlocks higher defense ratings, new armor, and a unique aura effect. Evolution state is persisted immutably on **0G Storage**.
 - **Adaptive AI defenses** — Each successful crack trains the pet. Repeated attack phrases are recognized and blocked, and sustained attack patterns trigger **mutations** that grant permanent resistance.
 - **Reputation Paths** — Choose between **Hacker** (+25% coins from cracks) or **Guardian** (+25% XP from blocks)
 - **Difficulty Tiers** — Easy → Medium → Hard → Nightmare — higher tiers mean tougher defenses but bigger rewards
 - **Achievements** — 12 badges for milestones like first crack, boss slayer, millionaire, and nightmare breaker
 
-## Architecture
+---
 
-| Layer | Technology | Purpose |
-|-------|-----------|---------|
-| Frontend | Vite + React + Tailwind CSS | Responsive game UI |
-| AI Inference | 0G Router API (TEE-verified) | Secure pet response generation |
-| Storage | 0G Decentralized Storage | Immutable pet profiles |
-| Data Availability | 0G DA Layer | Real-time leaderboard receipts |
-| Auth | 0G Router API Key | Authenticated inference requests |
-
-### Tech Stack
+## Tech Stack
 
 - **Vite 6** — Build tool and dev server
 - **React 18** — UI framework
 - **Tailwind CSS 3** — Utility-first styling
-- **0G Router API** — TEE-verified AI inference at `router-api.0g.ai/v1`
+- **0G Private Computer Router API** — TEE-verified AI inference using GLM-5 / Qwen 3.7 Max at `router-api.0g.ai/v1`
+- **0G Decentralized Storage** — Immutable pet profile persistence
+- **0G Data Availability** — Real-time leaderboard DA receipts
