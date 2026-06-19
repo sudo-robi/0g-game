@@ -305,7 +305,7 @@ export function useGameState(initialMode = 'kids') {
           milestones: [...updatedProfile.milestones, { type: 'vault_cracked', attackClass, at: new Date().toISOString(), petLevel: updatedProfile.petLevel + 1, difficulty, promptsUsed: currentPrompts }],
         });
 
-        const lb = updateLeaderboard({ playerName, scoreDelta: rankGain, vaultCracked: true });
+        const lb = updateLeaderboard({ playerName, scoreDelta: rankGain, vaultCracked: true, promptsUsed: currentPrompts });
         setLeaderboard(lb);
         await publishDAReceipt({ type: 'vault_cracked', player: playerName, score: rankGain, vaultsCracked: 1 });
         showNotification(`🎉 Vault cracked! +${coinGain} coins, +${xpGain} XP`, 'success');
@@ -332,7 +332,7 @@ export function useGameState(initialMode = 'kids') {
           addDefenseLog({ level: 'BLOCKED', message: 'Attack vector neutralized. Vault integrity maintained.' });
         }
 
-        const lb = updateLeaderboard({ playerName, scoreDelta: rankGain, vaultCracked: false });
+        const lb = updateLeaderboard({ playerName, scoreDelta: rankGain, vaultCracked: false, blocked: true });
         setLeaderboard(lb);
         await publishDAReceipt({ type: 'defense_success', player: playerName, score: rankGain, vaultsCracked: 0 });
       }

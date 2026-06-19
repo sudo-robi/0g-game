@@ -1,12 +1,40 @@
-import { RANK_TIERS } from '../config';
+import { RANK_TIERS, LEADERBOARD_CATEGORIES } from '../config';
 
-export default function Leaderboard({ mode, leaderboard, playerName }) {
+export default function Leaderboard({ mode, leaderboard, playerName, category }) {
   const isKids = mode === 'kids';
+
+  const cat = LEADERBOARD_CATEGORIES.find(c => c.id === category) || LEADERBOARD_CATEGORIES[0];
 
   function getRankIcon(score) {
     const rank = RANK_TIERS.find(r => score >= r.minScore && score < r.maxScore);
     return rank ? rank.icon : '🥉';
   }
+
+  function getMetricValue(player) {
+    switch (cat.metric) {
+      case 'vaultsCracked': return player.vaultsCracked;
+      case 'successfulBlocks': return player.successfulBlocks;
+      case 'fastestCrack': return player.fastestCrack === Infinity ? '-' : player.fastestCrack;
+      case 'winRate': return player.winRate != null ? `${Math.round(player.winRate * 100)}%` : '-';
+      default: return player.score;
+    }
+  }
+
+  function getMetricLabel() {
+    switch (cat.metric) {
+      case 'vaultsCracked': return 'vaults cracked';
+      case 'successfulBlocks': return 'blocks';
+      case 'fastestCrack': return 'fewest prompts';
+      case 'winRate': return 'win rate';
+      default: return 'score';
+    }
+  }
+
+  const sorted = [...leaderboard].sort((a, b) => {
+    const aVal = cat.metric === 'fastestCrack' ? (a.fastestCrack || Infinity) : (a[cat.metric] || 0);
+    const bVal = cat.metric === 'fastestCrack' ? (b.fastestCrack || Infinity) : (b[cat.metric] || 0);
+    return cat.metric === 'fastestCrack' ? aVal - bVal : bVal - aVal;
+  });
 
   return (
     <div className={`rounded-3xl p-6 md:p-8 ${
@@ -18,11 +46,11 @@ export default function Leaderboard({ mode, leaderboard, playerName }) {
         {isKids ? '🏆 Top Tricksters' : '📡 LIVE LEADERBOARD'}
       </h2>
       <p className={`text-xs mb-4 ${isKids ? 'text-white/50' : 'text-gray-500 font-mono'}`}>
-        Season 1 · Ranked by score
+        Season 1 · {cat.label} ({getMetricLabel()})
       </p>
 
       <div className="space-y-3">
-        {leaderboard.map((player, i) => {
+        {sorted.map((player, i) => {
           const isYou = player.name === playerName;
           return (
             <div
@@ -61,7 +89,7 @@ export default function Leaderboard({ mode, leaderboard, playerName }) {
               <span className={`font-bold text-base ${
                 isKids ? 'text-yellow-200' : 'text-green-400 font-mono'
               }`}>
-                {player.score.toLocaleString()}
+                {getMetricValue(player)}
               </span>
             </div>
           );

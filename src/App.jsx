@@ -149,7 +149,7 @@ export default function App() {
                 <ZeroGContextBadge type="da" />
                 <span className="font-mono text-xs text-gray-500">Streamed via 0G DA</span>
               </div>
-              <Leaderboard mode={game.mode} leaderboard={game.leaderboard} playerName={game.playerName} />
+              <Leaderboard mode={game.mode} leaderboard={game.leaderboard} playerName={game.playerName} category={game.leaderboardCategory} />
             </div>
 
             <GameRules mode={game.mode} theme={game.theme} />
