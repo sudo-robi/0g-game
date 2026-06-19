@@ -17,7 +17,7 @@ export default function ArchitecturePanel({ syncStatus, profile, apiKey, onApiKe
       endpoint: 'Immutable profile schema v1',
     },
     {
-      icon: '📡',
+      icon: '📦',
       title: '0G Data Availability',
       subtitle: 'The Live Leaderboard',
       description:

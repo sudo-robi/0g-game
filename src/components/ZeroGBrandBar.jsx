@@ -4,7 +4,7 @@ export default function ZeroGBrandBar({ syncStatus, lastTEEProof, mode, season }
   const layers = [
     { icon: '🖥️', label: 'Compute', value: '0G Private Compute', status: 'active', color: 'text-cyan-400' },
     { icon: '💾', label: 'Storage', value: syncStatus?.storageHash ? `Synced: ${syncStatus.storageHash.substring(0, 10)}...` : '0G Storage', status: syncStatus?.success ? 'active' : 'pending', color: 'text-green-400' },
-    { icon: '📡', label: 'Data Avail.', value: '0G DA Layer', status: 'active', color: 'text-yellow-400' },
+    { icon: '📦', label: 'Data Avail.', value: '0G DA Layer', status: 'active', color: 'text-yellow-400' },
     { icon: '🔒', label: 'TEE', value: lastTEEProof ? 'Verified' : 'Ready', status: lastTEEProof ? 'active' : 'pending', color: 'text-purple-400' },
   ];
 

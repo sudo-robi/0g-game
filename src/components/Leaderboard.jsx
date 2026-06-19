@@ -43,7 +43,7 @@ export default function Leaderboard({ mode, leaderboard, playerName, category })
       <h2 className={`font-display font-bold text-xl mb-1 ${
         isKids ? 'text-white' : 'text-cyan-300 font-mono'
       }`}>
-        {isKids ? '🏆 Top Tricksters' : '📡 LIVE LEADERBOARD'}
+        {isKids ? '🏆 Top Tricksters' : 'LIVE LEADERBOARD'}
       </h2>
       <p className={`text-xs mb-4 ${isKids ? 'text-white/50' : 'text-gray-500 font-mono'}`}>
         Season 1 · {cat.label} ({getMetricLabel()})
