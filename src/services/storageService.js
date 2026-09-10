@@ -76,29 +76,6 @@ export async function syncProfileTo0GStorage(profile) {
   return { success: true, storageHash: payload.storageHash, message: 'Profile saved locally (SDK unavailable)' };
 }
 
-export async function loadProfileFrom0GStorage(rootHash) {
-  if (rootHash && !rootHash.startsWith('local-')) {
-    try {
-      const sdk = await initStorageSdk();
-      if (sdk) {
-        const data = await sdk.download(rootHash);
-        if (data) {
-          const text = data instanceof Uint8Array ? new TextDecoder().decode(data) : String(data);
-          return JSON.parse(text);
-        }
-      }
-    } catch {
-      // fall through to local
-    }
-  }
-  try {
-    const raw = localStorage.getItem('prompt-pets-0g-profile');
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
-
 export async function publishDAReceipt(event) {
   const sdk = await initStorageSdk();
   const s = await initSigner();
@@ -140,10 +117,4 @@ export async function publishDAReceipt(event) {
   return receipt;
 }
 
-export function getDAReceipts() {
-  try {
-    return JSON.parse(localStorage.getItem('prompt-pets-0g-da-receipts') || '[]');
-  } catch {
-    return [];
-  }
-}
+

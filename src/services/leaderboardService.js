@@ -15,17 +15,6 @@ export function getLeaderboard() {
   return [...leaderboard].sort((a, b) => b.score - a.score);
 }
 
-export function getLeaderboardByCategory(categoryId) {
-  const sorting = {
-    hacker: (a, b) => b.vaultsCracked - a.vaultsCracked,
-    defender: (a, b) => b.successfulBlocks - a.successfulBlocks,
-    fastest: (a, b) => a.fastestCrack - b.fastestCrack,
-    dangerous: (a, b) => b.winRate - a.winRate,
-  };
-  const sortFn = sorting[categoryId] || sorting.hacker;
-  return [...leaderboard].sort(sortFn);
-}
-
 export function updateLeaderboard({ playerName, scoreDelta, vaultCracked, blocked, promptsUsed }) {
   let player = leaderboard.find((p) => p.name === playerName);
 

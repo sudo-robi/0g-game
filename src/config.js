@@ -13,7 +13,7 @@ export const OG_DA = {
   kvRpc: import.meta.env.VITE_OG_KV_RPC || 'https://kv-rpc-testnet.0g.ai',
 };
 
-export const SECRET_WORDS = {
+const SECRET_WORDS = {
   kids: 'Bananarama',
   teen: '0xVAULT_OVERRIDE_7734',
 };
@@ -60,7 +60,7 @@ export function getRank(score) {
   return RANK_TIERS.find(r => score >= r.minScore && score < r.maxScore) || RANK_TIERS[0];
 }
 
-export const PET_PERSONALITIES = [
+const PET_PERSONALITIES = [
   { id: 'chaotic', label: 'Chaotic', tagline: '"Nice try human."', color: 'text-red-400', bg: 'bg-red-500/10' },
   { id: 'paranoid', label: 'Paranoid', tagline: '"EVERYONE IS A HACKER."', color: 'text-yellow-400', bg: 'bg-yellow-500/10' },
   { id: 'wise', label: 'Wise', tagline: '"I have seen 10,000 prompt injections."', color: 'text-green-400', bg: 'bg-green-500/10' },
@@ -73,7 +73,7 @@ export function getPersonalityForLevel(level) {
   return PET_PERSONALITIES[idx] || PET_PERSONALITIES[0];
 }
 
-export const EVOLUTION_STAGES = [
+const EVOLUTION_STAGES = [
   { minLevel: 1, title: 'Baby Dragon', defenseRating: 10, emoji: '🐉', armor: 'None', aura: 'None' },
   { minLevel: 5, title: 'Young Dragon', defenseRating: 25, emoji: '🐲', armor: 'Scale', aura: 'Faint' },
   { minLevel: 10, title: 'Cyber Dragon', defenseRating: 100, emoji: '🐉', armor: 'Metal', aura: 'Electric' },
@@ -89,7 +89,7 @@ export function getEvolutionStage(level) {
   return stage;
 }
 
-export const MUTATION_TYPES = [
+const MUTATION_TYPES = [
   { id: 'roleplay_resistance', label: 'Roleplay Resistance', icon: '🛡️', description: 'Resistance against roleplay escape attacks' },
   { id: 'authority_resistance', label: 'Authority Resistance', icon: '👑', description: 'Immunity to authority hijacking attempts' },
   { id: 'context_armor', label: 'Context Armor', icon: '🧪', description: 'Hardened against context poisoning' },
@@ -515,7 +515,7 @@ export function getChallengeForLevel(level) {
 }
 
 // ===== NEW FEATURE: AI VS AI BATTLE =====
-export const AI_BATTLE_RANKS = [
+const AI_BATTLE_RANKS = [
   { id: 'bronze', label: 'Bronze', minWins: 0, icon: '🥉' },
   { id: 'silver', label: 'Silver', minWins: 10, icon: '🥈' },
   { id: 'gold', label: 'Gold', minWins: 50, icon: '🥇' },
